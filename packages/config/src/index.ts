@@ -27,4 +27,5 @@ export const envs = {
   SMTP_PASS: process.env.SMTP_PASS,
   CONTACT_RECEIVER: process.env.CONTACT_RECEIVER,
   JWT_SECRET: process.env.JWT_SECRET,
+  RABBITMQ_URL: process.env.RABBITMQ_URL
 };

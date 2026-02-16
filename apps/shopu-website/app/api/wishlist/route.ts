@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     let missingFields: string[] | null = null;
 
     for (const key in requiredFields) {
-      if (!requiredFields[key as keyof typeof requiredFields]) {
+      if (!requiredFields[key as keyof typeof requiredFields]) {:
         (missingFields ??= []).push(key);
       }
     }

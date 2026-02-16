@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@shopu/prisma/prismaClient';
 
-// In-memory cache with expiration
-const searchCache = new Map<string, { data: unknown[]; timestamp: number }>();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour cache TTL
-
-const cleanupCache = () => {
-  const now = Date.now();
-  for (const [key, value] of searchCache.entries()) {
-    if (now - value.timestamp > CACHE_TTL) {
-      searchCache.delete(key);
-    }
-  }
-};
-setInterval(cleanupCache, 5 * 60 * 1000);
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -27,20 +13,6 @@ export async function GET(req: NextRequest) {
     }
 
     const trimmed = name.trim().toLowerCase();
-
-    const cacheKey = `merged_${trimmed}_${limit}`;
-
-    // check cache first
-    if (searchCache.has(cacheKey)) {
-      const cached = searchCache.get(cacheKey);
-      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-        return NextResponse.json({
-          success: true,
-          data: cached.data,
-          cached: true,
-        });
-      }
-    }
 
     /** --- MEDICINES SEARCH -- */
     const medicines = await prisma.medicine.findMany({
@@ -106,12 +78,6 @@ export async function GET(req: NextRequest) {
       ...medicines.map(m => ({ ...m, type: 'medicine' })),
       ...products.map(p => ({ ...p, type: 'product' })),
     ].slice(0, limit); // enforce limit after merge
-
-    // store cache
-    searchCache.set(cacheKey, {
-      data: results,
-      timestamp: Date.now(),
-    });
 
     return NextResponse.json({
       success: true,

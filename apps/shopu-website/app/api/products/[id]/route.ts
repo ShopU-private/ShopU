@@ -1,5 +1,3 @@
-export const revalidate = 600;
-
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@shopu/prisma/prismaClient';
 

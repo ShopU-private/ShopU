@@ -289,3 +289,27 @@ export interface UseMedicinesOptions {
   type?: string;
   limit?: number;
 }
+
+export interface RateLimitResult {
+  allowed: boolean;
+  remaining: number;
+  resetTime: number;
+  retryAfter?: number;
+  identifier?: number;
+}
+
+export interface SessionData {
+  id: string;
+  [key: string]: unknown;
+}
+
+export interface Session {
+  sessionId: string;
+  data: SessionData;
+  createdAt: number;
+  expiresAt: number;
+}
+
+export interface QueueMessage {
+  [key: string]: unknown;
+}

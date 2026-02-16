@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@shopu/prisma/prismaClient';
 
-interface ProductResponse {
-  success: boolean;
-  products: unknown[];
-  total: number;
-  currentPage: number;
-  totalPages: number;
-  fromCache: boolean;
-}
-
 export async function GET(req: NextRequest) {
   try {
     // Read query params
@@ -67,7 +58,7 @@ export async function GET(req: NextRequest) {
     });
 
     // Response object
-    const responseData: ProductResponse = {
+    const responseData = {
       success: true,
       products: productsWithDiscount,
       total: totalCount,

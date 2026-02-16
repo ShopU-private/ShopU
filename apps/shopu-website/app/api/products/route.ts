@@ -1,5 +1,3 @@
-export const revalidate = 300;
-
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@shopu/prisma/prismaClient';
 
@@ -61,25 +59,6 @@ export async function GET(req: NextRequest) {
     console.error(err);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch products' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json();
-    const product = await prisma.product.create({
-      data,
-      include: {
-        subCategory: true,
-      },
-    });
-    return NextResponse.json({ product }, { status: 201 });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create product' },
       { status: 500 }
     );
   }
