@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.3.0
- * Query Engine version: 9d6ad21cbbceab97458517b147a6a09ff43aa735
+ * Prisma Client JS version: 7.4.0
+ * Query Engine version: ab56fe763f921d033a6c195e7ddeb3e255bdbb57
  */
 Prisma.prismaVersion = {
-  client: "7.3.0",
-  engine: "9d6ad21cbbceab97458517b147a6a09ff43aa735"
+  client: "7.4.0",
+  engine: "ab56fe763f921d033a6c195e7ddeb3e255bdbb57"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -120,6 +120,26 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.AddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fullName: 'fullName',
+  phone: 'phone',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  landmark: 'landmark',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  isDefault: 'isDefault',
+  addressType: 'addressType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.CartItemScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -129,6 +149,31 @@ exports.Prisma.CartItemScalarFieldEnum = {
   quantity: 'quantity',
   price: 'price',
   addedAt: 'addedAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  displayOrder: 'displayOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SubCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  categoryId: 'categoryId',
+  displayOrder: 'displayOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -296,31 +341,6 @@ exports.Prisma.PaymentScalarFieldEnum = {
   failedAt: 'failedAt'
 };
 
-exports.Prisma.CategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  slug: 'slug',
-  description: 'description',
-  imageUrl: 'imageUrl',
-  displayOrder: 'displayOrder',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.SubCategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  slug: 'slug',
-  description: 'description',
-  imageUrl: 'imageUrl',
-  categoryId: 'categoryId',
-  displayOrder: 'displayOrder',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -428,33 +448,13 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  phoneNumber: 'phoneNumber',
+  phone: 'phone',
   role: 'role',
   isActive: 'isActive',
   isEmailVerified: 'isEmailVerified',
   isPhoneVerified: 'isPhoneVerified',
   isProfileComplete: 'isProfileComplete',
   lastLoginAt: 'lastLoginAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.UserAddressScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
-  addressLine1: 'addressLine1',
-  addressLine2: 'addressLine2',
-  landmark: 'landmark',
-  city: 'city',
-  state: 'state',
-  postalCode: 'postalCode',
-  country: 'country',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  isDefault: 'isDefault',
-  addressType: 'addressType',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -527,7 +527,10 @@ exports.UserRole = exports.$Enums.UserRole = {
 };
 
 exports.Prisma.ModelName = {
+  Address: 'Address',
   CartItem: 'CartItem',
+  Category: 'Category',
+  SubCategory: 'SubCategory',
   Coupon: 'Coupon',
   UserCoupon: 'UserCoupon',
   Medicine: 'Medicine',
@@ -536,8 +539,6 @@ exports.Prisma.ModelName = {
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
   Payment: 'Payment',
-  Category: 'Category',
-  SubCategory: 'SubCategory',
   Product: 'Product',
   ProductImage: 'ProductImage',
   VariantType: 'VariantType',
@@ -546,7 +547,6 @@ exports.Prisma.ModelName = {
   CombinationValue: 'CombinationValue',
   Review: 'Review',
   User: 'User',
-  UserAddress: 'UserAddress',
   Wishlist: 'Wishlist'
 };
 

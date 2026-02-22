@@ -64,7 +64,7 @@ const initialState = {
     addresses: [],
     error: null,
     loading: false,
-    selectedAddressId: null
+    selectedAddressId: null,
 };
 const addressSlice = createSlice({
     name: 'address',

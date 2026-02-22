@@ -13,18 +13,27 @@ export const updateSubCategorySchema = z.object({
 });
 export const createSubCategorySchema = z.object({
   name: z.string().min(1, 'Subcategory name is required'),
-  categoryId: z.string().uuid('Invalid category ID'),
+  categoryId: z.string(),
 });
 
 export const createProductSchema = z.object({
   name: z.string().min(1, 'Product name is required'),
+  slug: z.string(),
   description: z.string().min(1),
   price: z.coerce.number().nonnegative(),
   stock: z.coerce.number().int().nonnegative(),
   imageUrl: z.string().min(1),
-  subCategoryId: z.string().uuid(),
-
-  manufacturers: z.string().optional(),
+  subCategoryId: z.string(),
+  shortDescription: z.string().optional(),
+  compareAtPrice: z.coerce.number().optional().nullable(),
+  costPrice: z.coerce.number().optional().nullable(),
+  lowStockThreshold: z.number().optional(),
+  sku: z.string().optional(),
+  barcode: z.string().optional(),
+  weight: z.coerce.number().optional(),
+  dimensions: z.string().optional(),
+  packageQty: z.string().optional(),
+  manufacturer: z.string().optional(),
   type: z.string().optional(),
   packaging: z.string().optional(),
   package: z.string().optional(),
@@ -40,6 +49,9 @@ export const createProductSchema = z.object({
   countryOfOrigin: z.string().optional(),
   manufacturerDetails: z.string().optional(),
   marketerDetails: z.string().optional(),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.string().optional()
 });
 
 export const updateProductSchema = z.object({

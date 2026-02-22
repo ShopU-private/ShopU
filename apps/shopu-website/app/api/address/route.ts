@@ -4,11 +4,17 @@ import { ShopUError } from '@/proxy/ShopUError';
 import { shopuErrorHandler } from '@/proxy/shopuErrorHandling';
 import { getAuthUserId } from '@/lib/auth';
 
+/**
+ * Get the user details using the token
+ * @param req -> taking the token from the cookie
+ * @returns -> Gives the address details of the particular user using the token
+ */
+
 export async function GET(req: NextRequest) {
   try {
     const userId = getAuthUserId(req);
 
-    const addresses = await prisma.userAddress.findMany({
+    const addresses = await prisma.address.findMany({
       where: { userId },
     });
 
@@ -20,25 +26,32 @@ export async function GET(req: NextRequest) {
       state: address.state ?? '',
       country: address.country ?? '',
       postalCode: address.postalCode ?? '',
-      phoneNumber: address.phoneNumber ?? '',
+      phone: address.phone ?? '',
     }));
 
     return NextResponse.json(
       {
         success: true,
         message: 'Address fetched successfully',
-        addresses: normalizedAddresses,
+        normalizedAddresses
       },
-      { status: 200 }
+      { status: 201 }
     );
   } catch (error) {
     return shopuErrorHandler(error);
   }
 }
 
+/**
+ * Adding the new address of the user
+ * @param req -> taking the token from the cookie
+ * @returns -> Add the new address of the particular user using the cookies
+ */
+
 export async function POST(req: NextRequest) {
   try {
     const userId = getAuthUserId(req);
+
     const {
       fullName,
       addressLine1,
@@ -47,7 +60,7 @@ export async function POST(req: NextRequest) {
       state,
       country,
       postalCode,
-      phoneNumber,
+      phone,
       latitude,
       longitude,
     } = await req.json();
@@ -59,7 +72,7 @@ export async function POST(req: NextRequest) {
       state,
       country,
       postalCode,
-      phoneNumber,
+      phone,
       latitude,
       longitude,
     };
@@ -72,10 +85,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (missingFields?.length) {
-      throw new ShopUError(401, `Missing fields required: ${missingFields.join(', ')}`);
+      return shopuErrorHandler(new ShopUError(401, `Missing fields required: ${missingFields.join(', ')}`));
     }
 
-    const newAddress = await prisma.userAddress.create({
+    const newAddress = await prisma.address.create({
       data: {
         userId,
         fullName,
@@ -85,7 +98,7 @@ export async function POST(req: NextRequest) {
         state,
         country,
         postalCode,
-        phoneNumber,
+        phone,
         latitude: latitude !== undefined && latitude !== null ? Number(latitude) : null,
         longitude: longitude !== undefined && longitude !== null ? Number(longitude) : null,
         isDefault: false,
@@ -96,7 +109,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: 'Address created successfully',
-        address: newAddress,
+        newAddress
       },
       { status: 201 }
     );

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const userId = getAuthUserId(req);
 
     if (!userId) {
-      throw new ShopUError(401, 'Invalid token');
+      return shopuErrorHandler(new ShopUError(401, 'Invalid token'));
     }
 
     const userDetails = await prisma.user.findUnique({
@@ -18,14 +18,14 @@ export async function GET(req: NextRequest) {
         id: true,
         name: true,
         email: true,
-        phoneNumber: true,
+        phone: true,
         role: true,
         isProfileComplete: true,
       },
     });
 
     if (!userDetails) {
-      throw new ShopUError(404, 'User not found');
+      return shopuErrorHandler(new ShopUError(404, 'User not found'));
     }
 
     return NextResponse.json(

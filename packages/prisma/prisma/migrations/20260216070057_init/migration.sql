@@ -11,6 +11,29 @@ CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'PROCESSING', 'COMPLETED', 'FAIL
 CREATE TYPE "PaymentProvider" AS ENUM ('RAZORPAY', 'STRIPE', 'PAYPAL', 'COD');
 
 -- CreateTable
+CREATE TABLE "addresses" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "full_name" TEXT NOT NULL,
+    "phone_number" TEXT NOT NULL,
+    "address_line1" TEXT NOT NULL,
+    "address_line2" TEXT,
+    "landmark" TEXT,
+    "city" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
+    "postal_code" TEXT NOT NULL,
+    "country" TEXT NOT NULL DEFAULT 'India',
+    "latitude" DOUBLE PRECISION,
+    "longitude" DOUBLE PRECISION,
+    "is_default" BOOLEAN NOT NULL DEFAULT false,
+    "address_type" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "addresses_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "cart_items" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
@@ -373,7 +396,7 @@ CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "name" TEXT,
     "email" TEXT,
-    "phone_number" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "role" "UserRole" NOT NULL DEFAULT 'USER',
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "is_email_verified" BOOLEAN NOT NULL DEFAULT false,
@@ -387,29 +410,6 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "user_addresses" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "full_name" TEXT NOT NULL,
-    "phone_number" TEXT NOT NULL,
-    "address_line1" TEXT NOT NULL,
-    "address_line2" TEXT,
-    "landmark" TEXT,
-    "city" TEXT NOT NULL,
-    "state" TEXT NOT NULL,
-    "postal_code" TEXT NOT NULL,
-    "country" TEXT NOT NULL DEFAULT 'India',
-    "latitude" DOUBLE PRECISION,
-    "longitude" DOUBLE PRECISION,
-    "is_default" BOOLEAN NOT NULL DEFAULT false,
-    "address_type" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "user_addresses_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "wishlists" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
@@ -419,6 +419,12 @@ CREATE TABLE "wishlists" (
 
     CONSTRAINT "wishlists_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE INDEX "addresses_user_id_idx" ON "addresses"("user_id");
+
+-- CreateIndex
+CREATE INDEX "addresses_is_default_idx" ON "addresses"("is_default");
 
 -- CreateIndex
 CREATE INDEX "cart_items_user_id_idx" ON "cart_items"("user_id");
@@ -670,25 +676,19 @@ CREATE INDEX "reviews_created_at_idx" ON "reviews"("created_at");
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_phone_number_key" ON "users"("phone_number");
+CREATE UNIQUE INDEX "users_phone_key" ON "users"("phone");
 
 -- CreateIndex
 CREATE INDEX "users_email_idx" ON "users"("email");
 
 -- CreateIndex
-CREATE INDEX "users_phone_number_idx" ON "users"("phone_number");
+CREATE INDEX "users_phone_idx" ON "users"("phone");
 
 -- CreateIndex
 CREATE INDEX "users_role_idx" ON "users"("role");
 
 -- CreateIndex
 CREATE INDEX "users_created_at_idx" ON "users"("created_at");
-
--- CreateIndex
-CREATE INDEX "user_addresses_user_id_idx" ON "user_addresses"("user_id");
-
--- CreateIndex
-CREATE INDEX "user_addresses_is_default_idx" ON "user_addresses"("is_default");
 
 -- CreateIndex
 CREATE INDEX "wishlists_user_id_idx" ON "wishlists"("user_id");
@@ -704,6 +704,9 @@ CREATE UNIQUE INDEX "wishlists_user_id_product_id_key" ON "wishlists"("user_id",
 
 -- CreateIndex
 CREATE UNIQUE INDEX "wishlists_user_id_medicine_id_key" ON "wishlists"("user_id", "medicine_id");
+
+-- AddForeignKey
+ALTER TABLE "addresses" ADD CONSTRAINT "addresses_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -724,7 +727,7 @@ ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN 
 ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "orders" ADD CONSTRAINT "orders_address_id_fkey" FOREIGN KEY ("address_id") REFERENCES "user_addresses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "orders" ADD CONSTRAINT "orders_address_id_fkey" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "orders" ADD CONSTRAINT "orders_coupon_id_fkey" FOREIGN KEY ("coupon_id") REFERENCES "coupons"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -782,9 +785,6 @@ ALTER TABLE "reviews" ADD CONSTRAINT "reviews_product_id_fkey" FOREIGN KEY ("pro
 
 -- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_medicine_id_fkey" FOREIGN KEY ("medicine_id") REFERENCES "medicines"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "user_addresses" ADD CONSTRAINT "user_addresses_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "wishlists" ADD CONSTRAINT "wishlists_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

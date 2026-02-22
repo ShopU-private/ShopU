@@ -1,50 +1,57 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@shopu/prisma/prismaClient';
-import { isAdmin } from '@/lib/auth';
-import { ShopUError } from '@/proxy/ShopUError';
-import { shopuErrorHandler } from '@/proxy/shopuErrorHandling';
-import { requireAuth } from '@/proxy/requireAuth';
+import { isAdmin } from "@/lib/auth";
+import { ShopUError } from "@/proxy/ShopUError";
+import { shopuErrorHandler } from "@/proxy/shopuErrorHandling";
+import { prisma } from "@shopu/prisma/prismaClient";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     if (!isAdmin(req)) {
-      throw new ShopUError(404, 'Admin account required');
+      return shopuErrorHandler(new ShopUError(403, 'Admin account required'));
     }
 
-    const { name, code, discount, maxUsage, expiryDate } = await req.json();
+    const { code, name, description, discountType, discountValue, minOrderValue, maxDiscountValue, startDate, expiryDate } = await req.json();
 
-    const requiredFields = { name, code, discount, maxUsage, expiryDate };
+    const requiredFields = { code, name, discountType, discountValue, minOrderValue, maxDiscountValue, startDate, expiryDate };
+
     let missingFields: string[] | null = null;
 
     for (const key in requiredFields) {
-      if (!requiredFields[key as keyof typeof requiredFields]) {
-        (missingFields ??= []).push(key);
+      if (!requiredFields[key as keyof typeof missingFields]) {
+        (missingFields ??= []).push(key)
       }
     }
 
-    if (missingFields?.length) {
-      throw new ShopUError(401, `Missing fields required: ${missingFields.join(', ')}`);
+    const checkCoupons = await prisma.coupon.findUnique({
+      where: { code: code.toUpperCase() }
+    })
+
+    if (checkCoupons) {
+      return shopuErrorHandler(new ShopUError(400, 'Coupon already exists'));
     }
 
-    // Always save coupon code in uppercase
-    const coupon = await prisma.coupon.create({
+    const newCoupon = await prisma.coupon.create({
       data: {
         name,
-        code: code.toUpperCase(),
-        discount,
-        maxUsage,
-        expiryDate: new Date(expiryDate),
-      },
-    });
+        code,
+        description,
+        discountType,
+        discountValue,
+        minOrderValue,
+        maxDiscountValue,
+        startDate: new Date(startDate),
+        expiryDate: new Date(expiryDate)
+      }
+    })
 
-    if (!coupon) {
-      throw new ShopUError(401, 'Failed to create coupons');
+    if (!newCoupon) {
+      return shopuErrorHandler(new ShopUError(400, 'Failed to create new coupon'))
     }
 
     return NextResponse.json(
-      { success: true, message: 'Coupon created successfully', coupon },
+      { success: true, message: '', newCoupon },
       { status: 201 }
-    );
+    )
   } catch (error) {
     return shopuErrorHandler(error);
   }
@@ -52,20 +59,20 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const auth = requireAuth(req);
-    if (!auth.authenticated) {
-      return auth.response;
+    if (!isAdmin(req)) {
+      return shopuErrorHandler(new ShopUError(403, 'Admin account required'));
     }
 
-    const user = auth.user;
-    if (!user) {
-      throw new ShopUError(404, 'Invalid credentials');
-    }
-    const coupons = await prisma.coupon.findMany({ orderBy: { id: 'desc' } });
+    const allCoupon = await prisma.coupon.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
     return NextResponse.json(
-      { success: true, message: 'Coupons fetched successfully', coupons },
+      { success: true, message: "Coupon details fetched", allCoupon },
       { status: 200 }
-    );
+    )
   } catch (error) {
     return shopuErrorHandler(error);
   }

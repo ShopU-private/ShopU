@@ -52,15 +52,15 @@ export async function POST(req: NextRequest) {
     const { productId, medicineId, quantity = 1 } = await req.json();
 
     if (!productId && !medicineId) {
-      throw new ShopUError(400, 'Product ID or Medicine ID is required');
+      return shopuErrorHandler(new ShopUError(400, 'Product ID or Medicine ID is required'));
     }
 
     if (productId && medicineId) {
-      throw new ShopUError(400, 'Cannot add both Medicine ID and Product ID at once');
+      return shopuErrorHandler(new ShopUError(400, 'Cannot add both Medicine ID and Product ID at once'));
     }
 
     if (quantity <= 0) {
-      throw new ShopUError(400, 'Item quantity should be greater than 0');
+      return shopuErrorHandler(new ShopUError(400, 'Item quantity should be greater than 0'));
     }
 
     if (productId) {
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         select: { id: true },
       });
       if (!exists) {
-        throw new ShopUError(404, 'Product not found');
+        return shopuErrorHandler(new ShopUError(404, 'Product not found'));
       }
     }
 
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
         select: { id: true },
       });
       if (!exists) {
-        throw new ShopUError(404, 'Medicine not found');
+        return shopuErrorHandler(new ShopUError(404, 'Medicine not found'));
       }
     }
 
@@ -147,6 +147,6 @@ export async function POST(req: NextRequest) {
       { status: existingItem ? 200 : 201 }
     );
   } catch (error) {
-    return shopuErrorHandler(error);
+    return shopuErrorHandler(error); 
   }
 }

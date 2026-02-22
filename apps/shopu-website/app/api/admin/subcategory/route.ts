@@ -66,8 +66,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const slug = name.toLowerCase().replace(/\s+/g, '-');
+
     const newSubCategory = await prisma.subCategory.create({
-      data: { name, categoryId },
+      data: { name, categoryId, slug },
     });
 
     return NextResponse.json(

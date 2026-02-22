@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
       throw new ShopUError(409, 'Category alreay exists');
     }
 
-    const newCategory = await prisma.category.create({ data: { name } });
+    const slug = name.toLowerCase().replace(/\s+/g, '-');
+    const newCategory = await prisma.category.create({ data: { name, slug } });
 
     if (!newCategory) {
       throw new ShopUError(401, 'Failed to creare category');

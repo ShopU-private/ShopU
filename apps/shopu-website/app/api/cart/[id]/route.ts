@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { quantity } = await req.json();
 
     if (!Number.isInteger(quantity) || quantity < 1) {
-      throw new ShopUError(400, 'Quantity must be a positive integer');
+      return shopuErrorHandler(new ShopUError(400, 'Quantity must be a positive integer'));
     }
 
     // Find the cart item and check if it belongs to the user
@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     });
 
     if (!cartItem) {
-      throw new ShopUError(404, 'Cart item not found');
+      return shopuErrorHandler(new ShopUError(404, 'Cart item not found'));
     }
 
     // Update the cart item quantity
@@ -82,13 +82,17 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     });
 
     if (!cartItem) {
-      throw new ShopUError(404, 'Cart item not found');
+      return shopuErrorHandler(new ShopUError(404, 'Cart item not found'));
     }
 
     // Delete the cart item
-    await prisma.cartItem.delete({
+    const deleteCartItem = await prisma.cartItem.delete({
       where: { id: cartItemId },
     });
+
+    if (!deleteCartItem) {
+      return shopuErrorHandler(new ShopUError(404, ''))
+    }
 
     return NextResponse.json({ success: true, message: 'Item removed from cart' }, { status: 200 });
   } catch (error) {

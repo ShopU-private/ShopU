@@ -1,16 +1,13 @@
 import path from 'path';
 import { config } from 'dotenv';
+import { fileURLToPath } from 'node:url';
 
-const isNodeRuntime =
-  typeof process !== 'undefined' &&
-  typeof process.versions?.node === 'string' &&
-  typeof process.cwd === 'function';
-
-if (isNodeRuntime) {
-  config({
-    path: path.join(process.cwd(), '../../../.env'),
-  });
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// packages/config/src/ -> root is 3 levels up
+config({
+  path: path.join(__dirname, '../../../.env'),
+});
 
 export const envs = {
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,

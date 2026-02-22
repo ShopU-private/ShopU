@@ -14,11 +14,11 @@
   "devDependencies": {
     "@shopu/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
-    "prisma": "^7.3.0"
+    "prisma": "^7.4.0"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0",
+    "@prisma/client": "^7.4.0",
     "@prisma/client-runtime-utils": "^7.3.0",
     "dotenv": "^17.2.3"
   },

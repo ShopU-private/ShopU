@@ -8,7 +8,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const userId = getAuthUserId(req);
     if (!userId) {
-      throw new ShopUError(401, 'Invalid credentials');
+      return shopuErrorHandler(new ShopUError(401, 'Invalid credentials'));
     }
 
     await prisma.user.delete({

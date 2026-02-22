@@ -1,35 +1,45 @@
-// /api/admin/products.ts
-import { NextResponse, NextRequest } from 'next/server';
-import { prisma } from '@shopu/prisma/prismaClient';
-import { isAdmin } from '@/lib/auth';
-import { createProductSchema } from '@/lib/schema/adminSchema';
-import cloudinary from '@/lib/cloudinary';
+import { isAdmin } from "@/lib/auth";
+import cloudinary from "@/lib/cloudinary";
+import { createProductSchema } from "@/lib/schema/adminSchema";
+import { ShopUError } from "@/proxy/ShopUError";
+import { shopuErrorHandler } from "@/proxy/shopuErrorHandling";
+import { prisma } from "@shopu/prisma/prismaClient";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  if (!isAdmin(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    if (!isAdmin(req)) {
+      return shopuErrorHandler(new ShopUError(401, 'Admin account required'));
+    }
+
     const body = await req.json();
     const parsed = createProductSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
-    }
+      return shopuErrorHandler(new ShopUError(400, `zod error: ${JSON.stringify(parsed.error.format())}`))
+    };
 
     const {
       name,
+      slug,
       description,
+      shortDescription,
       price,
+      compareAtPrice,
+      costPrice,
       stock,
+      lowStockThreshold,
+      sku,
+      barcode,
+      weight,
+      dimensions,
       imageUrl,
       subCategoryId,
-      manufacturers,
+      manufacturer,
+      manufacturerAddress,
       type,
       packaging,
-      package: pkg,
-      Qty,
+      packageQty,
       productForm,
       productHighlights,
       information,
@@ -37,15 +47,16 @@ export async function POST(req: NextRequest) {
       keyBenefits,
       directionsForUse,
       safetyInformation,
-      manufacturerAddress,
       countryOfOrigin,
       manufacturerDetails,
       marketerDetails,
+      metaTitle,
+      metaDescription,
+      metaKeywords
     } = parsed.data;
 
-    // Upload image to Cloudinary
     const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
-      folder: 'products',
+      folder: 'products'
     });
 
     const product = await prisma.product.create({
@@ -56,38 +67,70 @@ export async function POST(req: NextRequest) {
         stock,
         imageUrl: uploadResponse.secure_url,
         subCategoryId,
-        manufacturers,
         type,
+        slug,
+        packageQty,
         packaging,
-        package: pkg,
-        Qty,
         productForm,
         productHighlights,
         information,
-        keyIngredients,
         keyBenefits,
+        keyIngredients,
+        dimensions,
         directionsForUse,
         safetyInformation,
+        shortDescription,
+        compareAtPrice,
+        costPrice,
+        lowStockThreshold,
+        sku,
+        barcode,
+        weight,
+        manufacturer,
         manufacturerAddress,
         countryOfOrigin,
         manufacturerDetails,
         marketerDetails,
-      },
-    });
+        metaTitle,
+        metaDescription,
+        metaKeywords
+      }
+    })
 
-    return NextResponse.json({ success: true, data: product }, { status: 201 });
+    if (!product) {
+      return shopuErrorHandler(new ShopUError(400, 'Failed to create the product'))
+    }
+
+    return NextResponse.json(
+      { success: true, message: 'Product created successfully', product },
+      { status: 201 }
+    )
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+    return shopuErrorHandler(error);
   }
 }
 
-export async function GET() {
-  const products = await prisma.product.findMany({
-    include: {
-      variantTypes: true,
-      combinations: true,
-    },
-  });
-  return NextResponse.json(products);
+export async function GET(req: NextRequest) {
+  try {
+    if (!isAdmin(req)) {
+      return shopuErrorHandler(new ShopUError(401, 'Admin account is required'));
+    }
+
+    const product = await prisma.product.findMany({
+      include: {
+        combinations: true,
+        variantTypes: true,
+        reviews: true,
+        images: true,
+        subCategory: true
+      }
+    })
+
+    return NextResponse.json(
+      { success: true, message: 'Product details fetched successfully', product },
+      { status: 201 }
+    )
+  } catch (error) {
+    return shopuErrorHandler(error);
+  }
 }

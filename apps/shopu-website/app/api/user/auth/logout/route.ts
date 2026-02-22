@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const user = auth.user;
 
   if (!user) {
-    throw new ShopUError(401, 'Invalid credentials');
+    return shopuErrorHandler(new ShopUError(401, 'Invalid credentials'));
   }
 
   try {

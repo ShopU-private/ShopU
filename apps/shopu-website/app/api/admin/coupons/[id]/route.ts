@@ -10,7 +10,7 @@ export async function DELETE(
 ) {
   try {
     if (!isAdmin(request)) {
-      throw new ShopUError(404, 'Unauthorized access');
+      return shopuErrorHandler(new ShopUError(403, 'Unauthorized access'));
     }
     const { id } = await params;
 
@@ -19,7 +19,7 @@ export async function DELETE(
     });
 
     if (!deletedCoupon) {
-      throw new ShopUError(401, 'Failed to delete the coupon');
+      return shopuErrorHandler(new ShopUError(401, 'Failed to delete the coupon'));
     }
 
     return NextResponse.json(
