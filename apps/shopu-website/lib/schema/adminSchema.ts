@@ -51,7 +51,7 @@ export const createProductSchema = z.object({
   marketerDetails: z.string().optional(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional()
+  metaKeywords: z.string().optional(),
 });
 
 export const updateProductSchema = z.object({

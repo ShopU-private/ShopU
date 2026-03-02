@@ -94,12 +94,12 @@ model SubCategory {
 }
 
 model Coupon {
-  id            String  @id @default(cuid())
-  code          String  @unique
+  id            String       @id @default(cuid())
+  code          String       @unique
   name          String
-  description   String? @db.Text
-  discountType  String  @map("discount_type") // PERCENTAGE, FIXED
-  discountValue Decimal @map("discount_value") @db.Decimal(10, 2)
+  description   String?      @db.Text
+  discountType  DiscountType @map("discount_type")
+  discountValue Decimal      @map("discount_value") @db.Decimal(10, 2)
 
   // Constraints
   minOrderValue    Decimal? @map("min_order_value") @db.Decimal(10, 2)
@@ -177,6 +177,11 @@ enum PaymentProvider {
   STRIPE
   PAYPAL
   COD
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
 }
 
 model Medicine {
@@ -499,7 +504,7 @@ model Product {
 model ProductImage {
   id           String   @id @default(cuid())
   url          String
-  key          String // S3/Storage key for deletion
+  key          String
   altText      String?  @map("alt_text")
   displayOrder Int      @default(0) @map("display_order")
   productId    String   @map("product_id")

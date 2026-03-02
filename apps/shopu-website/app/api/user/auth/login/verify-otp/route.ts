@@ -46,9 +46,9 @@ export async function POST(request: NextRequest) {
       where: { phone: phone },
       data: {
         isPhoneVerified: true,
-        lastLoginAt: new Date()
-      }
-    })
+        lastLoginAt: new Date(),
+      },
+    });
     return response;
   } catch (error) {
     return shopuErrorHandler(error);

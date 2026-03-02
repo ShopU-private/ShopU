@@ -55,8 +55,8 @@ export const cache = {
   },
 
   /**
-   * @param keys 
-   * @returns 
+   * @param keys
+   * @returns
    */
   async deleteMany(keys: string[]): Promise<number> {
     try {

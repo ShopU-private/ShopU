@@ -56,7 +56,9 @@ export async function POST(req: NextRequest) {
     }
 
     if (productId && medicineId) {
-      return shopuErrorHandler(new ShopUError(400, 'Cannot add both Medicine ID and Product ID at once'));
+      return shopuErrorHandler(
+        new ShopUError(400, 'Cannot add both Medicine ID and Product ID at once')
+      );
     }
 
     if (quantity <= 0) {
@@ -93,51 +95,51 @@ export async function POST(req: NextRequest) {
 
     const cartItem = existingItem
       ? await prisma.cartItem.update({
-        where: { id: existingItem.id },
-        data: {
-          quantity: { increment: quantity },
-        },
-        include: {
-          product: productId
-            ? { select: { id: true, name: true, price: true, imageUrl: true } }
-            : undefined,
-          medicine: medicineId
-            ? {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                manufacturerName: true,
-                packSizeLabel: true,
-              },
-            }
-            : undefined,
-        },
-      })
+          where: { id: existingItem.id },
+          data: {
+            quantity: { increment: quantity },
+          },
+          include: {
+            product: productId
+              ? { select: { id: true, name: true, price: true, imageUrl: true } }
+              : undefined,
+            medicine: medicineId
+              ? {
+                  select: {
+                    id: true,
+                    name: true,
+                    price: true,
+                    manufacturerName: true,
+                    packSizeLabel: true,
+                  },
+                }
+              : undefined,
+          },
+        })
       : await prisma.cartItem.create({
-        data: {
-          userId,
-          productId: productId ?? null,
-          medicineId: medicineId ?? null,
-          quantity,
-        },
-        include: {
-          product: productId
-            ? { select: { id: true, name: true, price: true, imageUrl: true } }
-            : undefined,
-          medicine: medicineId
-            ? {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                manufacturerName: true,
-                packSizeLabel: true,
-              },
-            }
-            : undefined,
-        },
-      });
+          data: {
+            userId,
+            productId: productId ?? null,
+            medicineId: medicineId ?? null,
+            quantity,
+          },
+          include: {
+            product: productId
+              ? { select: { id: true, name: true, price: true, imageUrl: true } }
+              : undefined,
+            medicine: medicineId
+              ? {
+                  select: {
+                    id: true,
+                    name: true,
+                    price: true,
+                    manufacturerName: true,
+                    packSizeLabel: true,
+                  },
+                }
+              : undefined,
+          },
+        });
     return NextResponse.json(
       {
         success: true,
@@ -147,6 +149,6 @@ export async function POST(req: NextRequest) {
       { status: existingItem ? 200 : 201 }
     );
   } catch (error) {
-    return shopuErrorHandler(error); 
+    return shopuErrorHandler(error);
   }
 }

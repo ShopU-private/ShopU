@@ -5,11 +5,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@shopu/prisma/prismaClient';
 import { isUserLoggedIn } from '@/lib/auth';
 import { ShopUError } from '@/proxy/ShopUError';
+import { shopuErrorHandler } from '@/proxy/shopuErrorHandling';
 
 export async function GET(req: NextRequest) {
   try {
     if (!isUserLoggedIn) {
-      throw new ShopUError(404, 'Login required !!!');
+      return shopuErrorHandler(new ShopUError(401, 'login required!!!'));
     }
 
     const { searchParams } = new URL(req.url);
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
         orderBy: { name: 'asc' },
       });
 
-      return NextResponse.json({ success: true, data: medicines });
+      return NextResponse.json({ success: true, data: medicines }, { status: 200 });
     }
 
     // Handle searching by name
@@ -61,9 +62,7 @@ export async function GET(req: NextRequest) {
         ],
       });
 
-      // Store in cache
-
-      return NextResponse.json({ success: true, data: medicines });
+      return NextResponse.json({ success: true, data: medicines }, { status: 200 });
     }
 
     // Handle filtering by type
@@ -77,13 +76,12 @@ export async function GET(req: NextRequest) {
         orderBy: { name: 'asc' },
       });
 
-      return NextResponse.json({ success: true, data: medicines });
+      return NextResponse.json({ success: true, data: medicines }, { status: 200 });
     }
 
     // Default response
-    return NextResponse.json({ success: true, data: [] });
+    return NextResponse.json({ success: true, data: [] }, { status: 200 });
   } catch (error) {
-    console.error('[MEDICINE_SEARCH_ERROR]', error);
-    return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
+    return shopuErrorHandler(error);
   }
 }

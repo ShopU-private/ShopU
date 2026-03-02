@@ -3,7 +3,7 @@ model Coupon {
   code          String  @unique
   name          String
   description   String? @db.Text
-  discountType  String  @map("discount_type") // PERCENTAGE, FIXED
+  discountType  DiscountType  @map("discount_type")
   discountValue Decimal @map("discount_value") @db.Decimal(10, 2)
 
   // Constraints

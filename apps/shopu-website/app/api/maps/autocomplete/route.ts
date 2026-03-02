@@ -1,3 +1,5 @@
+import { ShopUError } from '@/proxy/ShopUError';
+import { shopuErrorHandler } from '@/proxy/shopuErrorHandling';
 import { envs } from '@shopu/config/config';
 import { NextResponse } from 'next/server';
 
@@ -6,7 +8,7 @@ export async function GET(req: Request) {
   const query = searchParams.get('q');
 
   if (!query) {
-    return NextResponse.json({ error: 'Missing query' }, { status: 400 });
+    return shopuErrorHandler(new ShopUError(404, 'Missing fields'));
   }
 
   const apiKey = envs.NEXT_PUBLIC_GOOGLE_MAP_API_KEY;
@@ -17,12 +19,11 @@ export async function GET(req: Request) {
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error(`Google API failed: ${res.status}`);
+      return shopuErrorHandler(new ShopUError(401, `Google API failed: ${res.status}`));
     }
     const data = await res.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error('Google Autocomplete API error:', error);
-    return NextResponse.json({ error: 'Failed to fetch autocomplete' }, { status: 500 });
+    return shopuErrorHandler(error);
   }
 }

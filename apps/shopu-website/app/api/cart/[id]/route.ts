@@ -91,7 +91,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     });
 
     if (!deleteCartItem) {
-      return shopuErrorHandler(new ShopUError(404, ''))
+      return shopuErrorHandler(new ShopUError(404, ''));
     }
 
     return NextResponse.json({ success: true, message: 'Item removed from cart' }, { status: 200 });

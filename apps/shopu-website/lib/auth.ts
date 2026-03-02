@@ -116,9 +116,9 @@ export function getAuthUserId(req: NextRequest): string {
   }
 
   return user.id;
-};
+}
 
 export function isUserLoggedIn(req: NextRequest): boolean {
   const auth = requireAuth(req);
-  return auth.authenticated
+  return auth.authenticated;
 }

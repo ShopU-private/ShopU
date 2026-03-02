@@ -1,10 +1,10 @@
-import { isAdmin } from "@/lib/auth";
-import cloudinary from "@/lib/cloudinary";
-import { createProductSchema } from "@/lib/schema/adminSchema";
-import { ShopUError } from "@/proxy/ShopUError";
-import { shopuErrorHandler } from "@/proxy/shopuErrorHandling";
-import { prisma } from "@shopu/prisma/prismaClient";
-import { NextRequest, NextResponse } from "next/server";
+import { isAdmin } from '@/lib/auth';
+import cloudinary from '@/lib/cloudinary';
+import { createProductSchema } from '@/lib/schema/adminSchema';
+import { ShopUError } from '@/proxy/ShopUError';
+import { shopuErrorHandler } from '@/proxy/shopuErrorHandling';
+import { prisma } from '@shopu/prisma/prismaClient';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,8 +16,10 @@ export async function POST(req: NextRequest) {
     const parsed = createProductSchema.safeParse(body);
 
     if (!parsed.success) {
-      return shopuErrorHandler(new ShopUError(400, `zod error: ${JSON.stringify(parsed.error.format())}`))
-    };
+      return shopuErrorHandler(
+        new ShopUError(400, `zod error: ${JSON.stringify(parsed.error.format())}`)
+      );
+    }
 
     const {
       name,
@@ -52,11 +54,11 @@ export async function POST(req: NextRequest) {
       marketerDetails,
       metaTitle,
       metaDescription,
-      metaKeywords
+      metaKeywords,
     } = parsed.data;
 
     const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
-      folder: 'products'
+      folder: 'products',
     });
 
     const product = await prisma.product.create({
@@ -93,18 +95,18 @@ export async function POST(req: NextRequest) {
         marketerDetails,
         metaTitle,
         metaDescription,
-        metaKeywords
-      }
-    })
+        metaKeywords,
+      },
+    });
 
     if (!product) {
-      return shopuErrorHandler(new ShopUError(400, 'Failed to create the product'))
+      return shopuErrorHandler(new ShopUError(400, 'Failed to create the product'));
     }
 
     return NextResponse.json(
       { success: true, message: 'Product created successfully', product },
       { status: 201 }
-    )
+    );
   } catch (error) {
     return shopuErrorHandler(error);
   }
@@ -122,14 +124,14 @@ export async function GET(req: NextRequest) {
         variantTypes: true,
         reviews: true,
         images: true,
-        subCategory: true
-      }
-    })
+        subCategory: true,
+      },
+    });
 
     return NextResponse.json(
       { success: true, message: 'Product details fetched successfully', product },
       { status: 201 }
-    )
+    );
   } catch (error) {
     return shopuErrorHandler(error);
   }

@@ -1,24 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@shopu/prisma/prismaClient';
-import { requireAuth } from '@/proxy/requireAuth';
-import { verifyToken } from '@/lib/auth';
+import { getAuthUserId } from '@/lib/auth';
 
 // POST - Create a new order
 export async function POST(req: NextRequest) {
   try {
-    const auth = requireAuth(req);
-    if (!auth.authenticated) {
-      return auth.response
-    }
-
-    const user = auth.user;
-    const userId = user?.id;
+    const userId = getAuthUserId(req);
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: 'User ID is required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 401 });
     }
 
     // 2. Parse request body - now with more flexible address handling
@@ -44,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     // Validate that the addressId exists if provided
     if (addressId) {
-      const existingAddress = await prisma.userAddress.findUnique({
+      const existingAddress = await prisma.address.findUnique({
         where: { id: addressId },
       });
 
@@ -59,15 +49,15 @@ export async function POST(req: NextRequest) {
     if (!validAddress) {
       try {
         // Extract address data from the address object
-        const { fullName, addressLine1, city, state, postalCode, phoneNumber } =
+        const { fullName, addressLine1, city, state, postalCode, phone } =
           typeof address === 'object' ? address : {};
 
         // Create a temporary address record
-        const tempAddress = await prisma.userAddress.create({
+        const tempAddress = await prisma.address.create({
           data: {
             userId,
             fullName: fullName || 'Delivery Address',
-            phoneNumber: phoneNumber || user?.phoneNumber || 'Unknown',
+            phone: phone || 'Unknown',
             addressLine1:
               addressLine1 || (typeof address === 'string' ? address : 'Address Line 1'),
             addressLine2: address.addressLine2 || null,
@@ -191,14 +181,7 @@ export async function POST(req: NextRequest) {
 // GET - Fetch orders
 export async function GET(req: NextRequest) {
   try {
-    // Authenticate user using the same token approach as in POST
-    const token = req.cookies.get('token')?.value;
-    if (!token) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = verifyToken(token);
-    const userId = payload.id;
+    const userId = getAuthUserId(req);
 
     // Fetch orders for the user using Prisma
     const orders = await prisma.order.findMany({

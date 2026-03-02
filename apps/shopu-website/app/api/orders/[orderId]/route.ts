@@ -1,25 +1,16 @@
 import { prisma } from '@shopu/prisma/prismaClient';
-import { verifyToken } from '@/lib/auth';
+import { getAuthUserId, verifyToken } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
+import { shopuErrorHandler } from '@/proxy/shopuErrorHandling';
+import { ShopUError } from '@/proxy/ShopUError';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
   try {
-    const token = req.cookies.get('token')?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { success: false, error: true, message: 'Please login first' },
-        { status: 401 }
-      );
-    }
-
-    const payload = verifyToken(token);
-    const userId = payload.id;
-
+    const userId = getAuthUserId(req);
     const { orderId } = await params;
 
     if (!orderId) {
-      return NextResponse.json({ message: 'Order ID is required' }, { status: 400 });
+      return shopuErrorHandler(new ShopUError(400, 'order id is required'));
     }
 
     const order = await prisma.order.findUnique({
@@ -35,12 +26,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ orde
     });
 
     if (!order || order.userId !== userId) {
-      return NextResponse.json({ message: 'Order not found or access denied' }, { status: 404 });
+      return shopuErrorHandler(new ShopUError(400, 'Order not found'));
     }
 
-    return NextResponse.json({ success: true, order }, { status: 200 });
+    return NextResponse.json(
+      { success: true, message: 'Order details fetched', order },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Error fetching order:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    return shopuErrorHandler(error);
   }
 }

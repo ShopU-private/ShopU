@@ -31,3 +31,8 @@ enum PaymentProvider {
   PAYPAL
   COD
 }
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}

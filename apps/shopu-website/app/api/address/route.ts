@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
       {
         success: true,
         message: 'Address fetched successfully',
-        normalizedAddresses
+        normalizedAddresses,
       },
       { status: 201 }
     );
@@ -85,7 +85,9 @@ export async function POST(req: NextRequest) {
     }
 
     if (missingFields?.length) {
-      return shopuErrorHandler(new ShopUError(401, `Missing fields required: ${missingFields.join(', ')}`));
+      return shopuErrorHandler(
+        new ShopUError(401, `Missing fields required: ${missingFields.join(', ')}`)
+      );
     }
 
     const newAddress = await prisma.address.create({
@@ -109,7 +111,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: 'Address created successfully',
-        newAddress
+        newAddress,
       },
       { status: 201 }
     );

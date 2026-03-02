@@ -10,7 +10,7 @@ if (!RABBITMQ_URL) {
 const globalForRabbitMq = globalThis as unknown as {
   connection?: Connection;
   channel?: Channel;
-}
+};
 
 let connection: Connection | null = null;
 let channel: Channel | null = null;
@@ -29,7 +29,7 @@ export const connectionToRabbitMQ = async (): Promise<void> => {
     console.log('RabbitMQ connected and Ready');
 
     connection.on('error', error => {
-      console.error(`RabbitMQ connection error: ${error}`)
+      console.error(`RabbitMQ connection error: ${error}`);
     });
 
     connection.on('closed', () => {
@@ -52,16 +52,16 @@ export const connectionToRabbitMQ = async (): Promise<void> => {
       if (channel) await channel.close();
       if (connection) await (connection as any).close();
       process.exit(0);
-    })
+    });
   } catch (error) {
-    console.error(`Rabbit MQ connection error: ${error}`)
-    throw new Error(String(error))
+    console.error(`Rabbit MQ connection error: ${error}`);
+    throw new Error(String(error));
   }
-}
+};
 
 export const getChannel = (): Channel => {
   if (!channel) {
-    throw new Error('RabbitMQ is not initialized. call connectionToRabbitMQ() first.')
+    throw new Error('RabbitMQ is not initialized. call connectionToRabbitMQ() first.');
   }
   return channel;
 };

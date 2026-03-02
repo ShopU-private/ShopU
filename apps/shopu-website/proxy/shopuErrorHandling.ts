@@ -8,7 +8,7 @@ export function shopuErrorHandler(err: unknown) {
 
   // Properly extract error message
   let errorMessage = 'An unexpected error occurred';
-  
+
   if (err instanceof Error) {
     errorMessage = err.message;
   } else if (typeof err === 'string') {
@@ -16,7 +16,7 @@ export function shopuErrorHandler(err: unknown) {
   } else if (err && typeof err === 'object') {
     errorMessage = JSON.stringify(err);
   }
-  
+
   return NextResponse.json(
     { success: false, message: `Internal server error: ${errorMessage}` },
     { status: 500 }

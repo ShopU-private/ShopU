@@ -27,7 +27,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return shopuErrorHandler(new ShopUError(404, 'Address not found'));
     }
 
-    return NextResponse.json({ success: true, message: 'Fetched address successfully', address }, { status: 200 });
+    return NextResponse.json(
+      { success: true, message: 'Fetched address successfully', address },
+      { status: 200 }
+    );
   } catch (error) {
     return shopuErrorHandler(error);
   }
