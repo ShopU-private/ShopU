@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             id: true,
             name: true,
             email: true,
-            phoneNumber: true,
+            phone: true,
           },
         },
         address: true,
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           include: {
             product: {
               include: {
-                productImages: true,
+                images: true,
               },
             },
             combination: {

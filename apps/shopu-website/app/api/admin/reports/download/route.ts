@@ -52,13 +52,13 @@ export async function GET(req: NextRequest) {
     // Calculate average order value and total revenue
     const orderStats = await prisma.order.aggregate({
       _avg: {
-        totalAmount: true,
+        total: true,
       },
       _count: {
         id: true,
       },
       _sum: {
-        totalAmount: true,
+        total: true,
       },
     });
 
@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
         },
       },
       _sum: {
-        totalAmount: true,
+        total: true,
       },
     });
 
@@ -103,12 +103,12 @@ export async function GET(req: NextRequest) {
         },
       },
       _sum: {
-        totalAmount: true,
+        total: true,
       },
     });
 
-    const revenueThisMonthAmount = Number(revenueThisMonth._sum.totalAmount || 0);
-    const revenueLastMonthAmount = Number(revenueLastMonth._sum.totalAmount || 0);
+    const revenueThisMonthAmount = Number(revenueThisMonth._sum.total || 0);
+    const revenueLastMonthAmount = Number(revenueLastMonth._sum.total || 0);
     const revenueGrowth =
       revenueLastMonthAmount > 0
         ? ((revenueThisMonthAmount - revenueLastMonthAmount) / revenueLastMonthAmount) * 100
@@ -117,8 +117,8 @@ export async function GET(req: NextRequest) {
     // Total products count
     const totalProducts = await prisma.product.count();
 
-    const avgOrderValue = orderStats._avg.totalAmount || 0;
-    const totalRevenue = Number(orderStats._sum.totalAmount || 0);
+    const avgOrderValue = orderStats._avg.total || 0;
+    const totalRevenue = Number(orderStats._sum.total || 0);
     const totalOrders = orderStats._count.id || 0;
 
     return NextResponse.json({

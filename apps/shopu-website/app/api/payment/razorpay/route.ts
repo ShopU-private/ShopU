@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
       prefill: {
         name: order.user?.name || 'Customer',
         email: order.user?.email || '',
-        contact: order.user?.phoneNumber || order.address?.phoneNumber || '',
+        contact: order.user?.phone || order.address?.phone || '',
       },
       notes: {
         address: order.address

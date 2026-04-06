@@ -1,11 +1,11 @@
-import { getChannel } from "./index.js";
+import { getChannel } from './index.js';
 export const queue = {
     async publish(queueName, message) {
         try {
             const channel = getChannel();
             await channel.assertQueue(queueName, { durable: true });
             const sent = channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), {
-                persistent: true
+                persistent: true,
             });
             return sent;
         }
@@ -41,5 +41,5 @@ export const queue = {
             console.error(`RabbitMQ consume error: ${error}`);
             throw error;
         }
-    }
+    },
 };

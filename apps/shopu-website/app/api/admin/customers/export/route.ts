@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         where.OR = [
           { name: { contains: searchQuery, mode: 'insensitive' } },
           { email: { contains: searchQuery, mode: 'insensitive' } },
-          { phoneNumber: { contains: searchQuery } },
+          { phone: { contains: searchQuery } },
         ];
       }
 
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         orders: {
           select: {
             id: true,
-            totalAmount: true,
+            total: true,
             createdAt: true,
           },
         },
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     // Transform to CSV format
     const csvData = customers.map(customer => {
       const totalOrders = customer.orders.length;
-      const totalSpent = customer.orders.reduce((sum, order) => sum + Number(order.totalAmount), 0);
+      const totalSpent = customer.orders.reduce((sum, order) => sum + Number(order.total), 0);
       const lastOrderDate =
         customer.orders.length > 0
           ? customer.orders.sort(
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
         'Customer ID': customer.id,
         Name: customer.name || 'N/A',
         Email: customer.email || 'N/A',
-        'Phone Number': customer.phoneNumber,
+        'Phone Number': customer.phone,
         'Total Orders': totalOrders,
         'Total Spent': totalSpent.toFixed(2),
         'Last Order Date': lastOrderDate.toISOString().split('T')[0],

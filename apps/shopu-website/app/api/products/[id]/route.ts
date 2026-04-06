@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         subCategory: {
           include: { category: true },
         },
-        productImages: true,
+        images: true,
         variantTypes: {
           include: {
             values: true,

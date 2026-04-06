@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 
 export default function UnauthorizedPage() {
   return (
@@ -12,7 +13,7 @@ export default function UnauthorizedPage() {
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles = {
   container: {
     width: '100%',
     height: '100vh',
@@ -46,4 +47,4 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: 'all 0.3s ease',
     outline: 'none',
   },
-};
+} satisfies Record<string, CSSProperties>;

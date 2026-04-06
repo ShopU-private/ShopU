@@ -91,7 +91,7 @@ export async function getUserFromToken(token: string) {
         id: true,
         name: true,
         email: true,
-        phoneNumber: true,
+        phone: true,
         role: true,
       },
     });

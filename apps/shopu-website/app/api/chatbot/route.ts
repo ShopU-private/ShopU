@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error('Chatbot error:', error);
+    console.error(String(error));
 
     // Provide a more descriptive error in the console
     if (error instanceof Error) {

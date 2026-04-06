@@ -38,8 +38,6 @@ export async function POST(req: NextRequest) {
 
     const item = await prisma.wishlist.create({
       data: {
-        name,
-        image_url,
         productId,
         userId,
       },
@@ -66,7 +64,6 @@ export async function GET(req: NextRequest) {
     //Query wishlist for the specific user
     const items = await prisma.wishlist.findMany({
       where: {
-        is_active: true,
         userId: userId,
       },
       include: {
@@ -82,9 +79,7 @@ export async function GET(req: NextRequest) {
     // Map to send stock along with wishlist item
     const response = items.map(item => ({
       id: item.id,
-      name: item.name,
       price: item.product?.price ?? 0,
-      image_url: item.image_url,
       productId: item.productId,
       createdAt: item.createdAt,
       stock: item.product?.stock ?? 0,

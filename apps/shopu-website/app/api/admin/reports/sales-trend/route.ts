@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
         },
       },
       select: {
-        totalAmount: true,
+        total: true,
         createdAt: true,
       },
     });
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       const weekKey = `Week ${Math.ceil((endDate.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24 * 7))}`;
 
       const currentAmount = weeklyData.get(weekKey) || 0;
-      weeklyData.set(weekKey, currentAmount + Number(order.totalAmount));
+      weeklyData.set(weekKey, currentAmount + Number(order.total));
     });
 
     // Convert to array format

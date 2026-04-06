@@ -60,13 +60,13 @@ export async function GET(req: NextRequest) {
       // Order statistics in one query
       prisma.order.aggregate({
         _avg: {
-          totalAmount: true,
+          total: true,
         },
         _count: {
           id: true,
         },
         _sum: {
-          totalAmount: true,
+          total: true,
         },
       }),
 
@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
           },
         },
         _sum: {
-          totalAmount: true,
+          total: true,
         },
       }),
 
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
           },
         },
         _sum: {
-          totalAmount: true,
+          total: true,
         },
       }),
 
@@ -124,8 +124,8 @@ export async function GET(req: NextRequest) {
     const ordersGrowth =
       ordersLastMonth > 0 ? ((ordersThisMonth - ordersLastMonth) / ordersLastMonth) * 100 : 0;
 
-    const revenueThisMonthAmount = Number(revenueThisMonth._sum.totalAmount || 0);
-    const revenueLastMonthAmount = Number(revenueLastMonth._sum.totalAmount || 0);
+    const revenueThisMonthAmount = Number(revenueThisMonth._sum.total || 0);
+    const revenueLastMonthAmount = Number(revenueLastMonth._sum.total || 0);
     const revenueGrowth =
       revenueLastMonthAmount > 0
         ? ((revenueThisMonthAmount - revenueLastMonthAmount) / revenueLastMonthAmount) * 100
@@ -135,8 +135,8 @@ export async function GET(req: NextRequest) {
       totalCustomers,
       activeCustomers,
       newThisMonth,
-      avgOrderValue: Number(orderAggregation._avg.totalAmount || 0),
-      totalRevenue: Number(orderAggregation._sum.totalAmount || 0),
+      avgOrderValue: Number(orderAggregation._avg.total || 0),
+      totalRevenue: Number(orderAggregation._sum.total || 0),
       totalOrders: orderAggregation._count.id || 0,
       totalProducts,
       revenueGrowth: Number(revenueGrowth.toFixed(1)),

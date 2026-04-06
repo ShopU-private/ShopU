@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
         { email: { contains: search, mode: 'insensitive' } },
-        { phoneNumber: { contains: search } },
+        { phone: { contains: search } },
       ];
     }
 
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
           orders: {
             select: {
               id: true,
-              totalAmount: true,
+              total: true,
               createdAt: true,
             },
             orderBy: { createdAt: 'desc' },
@@ -80,13 +80,13 @@ export async function GET(req: NextRequest) {
         userId: { in: customerIds },
       },
       _sum: {
-        totalAmount: true,
+        total: true,
       },
     });
 
     // Create a map for quick lookup
     const orderTotalsMap = new Map(
-      orderTotals.map(total => [total.userId, Number(total._sum.totalAmount || 0)])
+      orderTotals.map(total => [total.userId, Number(total._sum.total || 0)])
     );
 
     // Transform data efficiently
@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
         id: customer.id,
         name: customer.name || 'N/A',
         email: customer.email || 'N/A',
-        phoneNumber: customer.phoneNumber || 'N/A',
+        phoneNumber: customer.phone || 'N/A',
         totalOrders,
         totalSpent,
         lastOrderDate: lastOrderDate.toISOString(),
@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[GET /api/admin/customers]', error);
+    console.error(String(error))
     return NextResponse.json({ error: 'Failed to fetch customers' }, { status: 500 });
   }
 }

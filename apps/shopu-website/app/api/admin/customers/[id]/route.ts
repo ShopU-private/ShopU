@@ -76,7 +76,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       message: 'Customer deleted successfully',
     });
   } catch (error) {
-    console.error('[DELETE /api/admin/customers/[id]]', error);
+    console.error(String(error));
     return NextResponse.json({ error: 'Failed to delete customer' }, { status: 500 });
   }
 }
@@ -110,7 +110,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       customer: updatedCustomer,
     });
   } catch (error) {
-    console.error('[PUT /api/admin/customers/[id]]', error);
+    console.error(String(error));
     return NextResponse.json({ error: 'Failed to update customer' }, { status: 500 });
   }
 }
