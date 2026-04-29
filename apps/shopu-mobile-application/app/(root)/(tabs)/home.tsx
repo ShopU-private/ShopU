@@ -1,12 +1,13 @@
 import { images } from '@/constants';
 import React from 'react';
-import { Image, SafeAreaView, ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import NewArrivalProduct from '@/components/DifferentProductSection/NewArrivalProduct';
 import HairAndSkinProducts from '@/components/DifferentProductSection/HairAndSkinProduct';
 import EveryDayMedicines from '@/components/DifferentProductSection/EveryDayMedicines';
 import TravelEssentials from '@/components/DifferentProductSection/TravelEssentials';
 import ColdAndCoughProducts from '@/components/DifferentProductSection/ColdAndCoughProduct';
 import ReferAndEarn from '@/components/HomePage/ReferAndEarn';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Home = () => {
   return (

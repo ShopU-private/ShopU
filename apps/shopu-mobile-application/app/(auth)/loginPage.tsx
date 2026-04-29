@@ -87,7 +87,7 @@ const LoginPage = () => {
             />
 
             <TouchableOpacity
-              className="bg-primary-bold py-3.25 mb-2.5 rounded-lg px-20"
+              className="bg-primary-bold py-3 mb-2 rounded-lg px-20"
               onPress={handleSubmit}
             >
               <Text className="font-KarlaMedium text-[14px] text-white">Generate OTP</Text>

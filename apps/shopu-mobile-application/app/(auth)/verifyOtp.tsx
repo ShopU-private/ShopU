@@ -9,13 +9,13 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
 const OTP_LENGTH = 6;
@@ -207,7 +207,7 @@ const VerifyOTP = () => {
           keyboardShouldPersistTaps="handled"
         >
           <View className="mb-8 items-center">
-            <Image source={images.verifyOtpImages} className="h-59.25 w-57 mb-6" />
+            <Image source={images.verifyOtpImages} className='h-52 w-48' />
             <Text className="font-KarlaBold mb-2 text-center text-[24px]">OTP Verification</Text>
             <View className="items-center">
               <Text className="font-KarlaRegular text-center text-[14px] text-gray-600">
@@ -227,7 +227,7 @@ const VerifyOTP = () => {
                   ref={el => {
                     inputs.current[index] = el;
                   }}
-                  className={`h-13.75 w-11.25 font-KarlaBold rounded-lg border text-center text-[18px] ${
+                  className={`h-12 w-12 font-KarlaBold rounded-lg border text-center text-[18px] ${
                     digit ? 'border-primary-bold bg-primary-light/20' : 'border-gray-300'
                   } ${isLoading ? 'opacity-50' : ''}`}
                   keyboardType="number-pad"

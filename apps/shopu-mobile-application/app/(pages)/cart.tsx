@@ -1,6 +1,7 @@
 import CartScreen from '@/components/CartPage/Cart';
 import React from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Cart = () => {
   return (

@@ -1,7 +1,8 @@
 import { images } from '@/constants';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const HomeHeader = () => {
   const [showText, setShowText] = useState('Products');

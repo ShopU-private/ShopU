@@ -1,6 +1,7 @@
-import { View, Text, SafeAreaView, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import React from 'react';
 import { images } from '@/constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ReferAndEarn = () => {
   return (

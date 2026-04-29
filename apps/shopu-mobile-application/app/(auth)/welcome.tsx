@@ -1,9 +1,10 @@
-import { View, Text, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useRef, useState } from 'react';
 import Swiper from 'react-native-swiper';
 import { images } from '@/constants/index';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const swiperStyle = {
   mainViewStyle: 'flex h-full items-center',
